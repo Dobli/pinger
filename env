@@ -1,0 +1,5 @@
+DB_NAME=pinger
+DB_USER=pinger
+DB_PASS=pinger
+DB_SERVICE=db
+DB_PORT=5432

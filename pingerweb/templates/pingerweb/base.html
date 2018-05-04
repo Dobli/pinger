@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+{% load static %}
+{% load mdl_extras %}
+
+{% url 'pingerweb:home' as home_url %}
+{% url 'pingerweb:pools' as pools_url %}
+{% url 'pingerweb:online' as online_url %}
+{% url 'pingerweb:consumption' as consumption_url %}
+{% url 'pingerweb:export' as export_url %}
+
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>{% block title %}Projekt Pinger{% endblock title %}</title>
+        <link rel="shortcut icon" href="{% static 'pingerweb/images/favicon.ico' %}" />
+        <link rel="stylesheet" href="{% static 'pingerweb/css/material.min.css' %}">
+        <script src="{% static 'pingerweb/css/material.min.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js" charset="utf-8"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" charset="utf-8"></script>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="{% static 'pingerweb/css/pinger.css' %}">
+        <!-- HTML5 date picker -->
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script charset="utf-8">
+// API endpoints functions
+
+/**
+* Endpoint for getting chart data for online pcs of a pool
+*
+* @param poolId - pool to retrive data for
+*/
+var endpoint_chart_data_online_pcs = function(poolId) {
+    return '{% url 'pingerservice:api_chart_data_pool_online' 0 %}'.replace(0, poolId)
+}
+
+/**
+* Endpoint for getting chart data from today
+*
+* @param poolId - pool to retrive data for
+*/
+var endpoint_chart_data = function(poolId) {
+    return '{% url 'pingerservice:api_chart_data_pool' 0 %}'.replace(0, poolId)
+}
+
+/**
+* Endpoint for getting chart data of a given date
+*
+* @param poolId - pool to retreive data for
+* @param year - year to use
+* @param month - month to use
+* @param day - day to use
+*/
+var endpoint_chart_date_url = function(poolId, year, month, day) {
+    // resolve with placeholders so django can figure out the url
+    var endpoint_chart_date = '{% url 'pingerservice:api_chart_data_pool_date' 0 1 2 3 %}'
+    // remove placeholders
+    endpoint_chart_date = endpoint_chart_date.replace('/0/1/2/3/', '')
+    // add function parameters
+    return endpoint_chart_date + "/" + poolId + "/" + year + "/" + month + "/" + day
+}
+
+/**
+* Endpoint to get a list of all pools
+*/
+var endpoint_pools = function() {
+    return '{% url 'pingerservice:api_pools' %}'
+}
+        </script>
+        <script src="{% static 'pingerweb/scripts/pinger.js' %}"></script>
+        {% block headextras %}{% endblock headextras %}
+    </head>
+    <body>
+        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-tabs mdl-layout--fixed-header mdl-layout--no-desktop-drawer-button">
+            <header class="mdl-layout__header mdl-layout__header--waterfall pinger-header">
+                {% block navigation %}
+                <!-- Visible during scrolling -->
+                <div class="mdl-layout__header-row">
+                    <!-- Title -->
+                    <img src="{% static 'pingerweb/images/pinger_banner.png'%}" alt="Pinger Logo" height="100%">
+                    <span class="mdl-layout-title pinger-title">Project Pinger</span>
+                </div>
+                <!-- Hidden on scroll -->
+                <nav class="mdl-layout__tab-bar mdl-js-ripple-effect pinger-tab-bar mdl-layout--large-screen-only">
+                    <!-- Navigation -->
+                    <a href="{{ home_url }}" class="mdl-layout__tab {% is_active request home_url %}">übersicht</a>
+                    <a href="{{ pools_url }}" class="mdl-layout__tab {% is_active request pools_url %}">pools</a>
+                    <a href="{{ online_url }}" class="mdl-layout__tab {% is_active request online_url %}">aktuell online</a>
+                    <!-- <a href="{{ consumption_url }}" class="mdl-layout__tab {% is_active request consumption_url %}">verbrauch</a> -->
+                    <a href="{{ export_url }}" class="mdl-layout__tab {% is_active request export_url %}">Export</a>
+                </nav>
+                {% endblock navigation%}
+            </header>
+            <div class="mdl-layout__drawer">
+                <span class="mdl-layout-title">Project Pinger</span>
+                <!-- Navigation -->
+                <nav class="mdl-navigation">
+                    <a href="{{ home_url }}" class="mdl-navigation__link {% is_active request home_url %}">Übersicht</a>
+                    <a href="{{ pools_url }}"class="mdl-navigation__link {% is_active request pools_url %}">Pools</a>
+                    <a href="{{ online_url }}" class="mdl-navigation__link {% is_active request online_url %}">Aktuell Online</a>
+                    <!-- <a href="{{ consumption_url }}" class="mdl-navigation__link {% is_active request consumption_url %}">Verbrauch</a> -->
+                    <a href="{{ export_url }}" class="mdl-navigation__link {% is_active request export_url %}">Export</a>
+                </nav>
+            </div>
+            <main class="mdl-layout__content">
+            <div class="mdl-grid">
+                {% block content %}
+                {% endblock content %}
+            </div>
+            </main>
+        </div>
+    </body>
+</html>

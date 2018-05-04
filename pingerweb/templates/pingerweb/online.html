@@ -1,0 +1,102 @@
+{% extends "pingerweb/base.html" %}
+
+{% block title %}Online - {{ block.super }}{% endblock title %}
+
+{% block content %}
+
+<div class="mdl-cell mdl-cell--4-col mdl-cell--6-col-tablet mdl-cell--8-col-desktop mdl-cell--1-offset-tablet mdl-cell--2-offset-desktop">
+    <div class="pinger-chart-card mdl-card mdl-shadow--2dp">
+        <div class="mdl-card__title">
+            <!-- drop down menu to choose pool -->
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-dirty">
+                <select class="mdl-textfield__input pool-select" id="pool_selection">
+                </select>
+                <label class="mdl-textfield__label" for="pool_selection">Pool</label>
+            </div>
+            <div class="mdl-layout-spacer"></div>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="myfile">
+                <button type="submit">Upload</button>
+            </form>
+        </div>
+        <!-- canvas to display chart -->
+        <div class="mdl-card__actions mdl-card--border pinger-chart-container">
+            <canvas id="poolChart" height="300" class="pinger-chart-canvas" ></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+// DOM Elements
+var poolSelectionElem = document.getElementById("pool_selection");
+
+// chart element
+var pingerChart;
+
+// function to generate a pie chart
+function createPieChart (domId, chartData){
+    var pingChartElem = document.getElementById(domId).getContext('2d')
+    
+    if(pingerChart){
+        // reset the chart if already visible
+        pingerChart.destroy();
+    }
+
+    pingerChart = new Chart(pingChartElem, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                    data: [chartData.online, chartData.offline],
+                    backgroundColor: ["#e37151cc", "#d3d3d3aa"],
+                    hoverBackgroundColor: ["#e37151ee", "#d3d3d3cc"]
+                }],
+        
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+            labels: [
+                    'Online',
+                    'Offline'
+                ]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'Pool: '+chartData.room_no,
+                fontSize: 16
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+                display: true,
+                position: "top"
+            }
+        }
+    });
+}
+
+// call chart creation when page is ready
+$(window).on('load', function() {
+    getPoolListData(function(pools){
+        // fill pool selection drop down and call chart creation on change
+        setPoolList('pool_selection', pools, function(pool){
+            // get newly selected pool
+            var poolNo = $( '#pool_selection' ).val();
+
+            // load pool online data and call chart creation on success
+            getCurrentlyOnline(poolNo, function(chartData){
+                createPieChart('poolChart', chartData);
+            })
+        });
+
+
+        // get first pool 
+        firstPool = pools[0].pk;
+        // preload initial chart with first pools data
+        getCurrentlyOnline(firstPool, function(chartData){
+            createPieChart('poolChart', chartData);
+        })
+
+    });
+});
+</script>
+{% endblock content %}

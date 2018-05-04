@@ -1,0 +1,57 @@
+{% extends "pingerweb/base.html" %}
+
+{% block title %}Export - {{ block.super }}{% endblock title %}
+
+{% block content %}
+<div class="mdl-cell mdl-cell--4-col mdl-cell--6-col-tablet mdl-cell--8-col-desktop mdl-cell--1-offset-tablet mdl-cell--2-offset-desktop">
+    <!-- Card which holds the Export settings and room selector -->
+    <div class="pinger-card mdl-card mdl-shadow--2dp">
+        <!-- form to choose settings -->
+        <div class="mdl-card__title">
+            <form id="export-form" action="{% url 'pingerservice:api_csv_data' %}" method="get" accept-charset="utf-8">
+                <div class="mdl-card__title">
+                    <h4 class="mdl-card__title-text">Select Pools</h4>
+                </div>
+
+                <ul id="pool_menu" class="mdl-list">
+                </ul>
+
+                <div class="mdl-layout-spacer"></div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="date" name="start_date" id="date_start_selection">
+                    <label class="mdl-textfield__label" for="date_start_selection">Von</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="date" name="end_date" id="date_end_selection">
+                    <label class="mdl-textfield__label" for="date_end_selection">Bis</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-dirty">
+                    <select class="mdl-textfield__input pool-select" id="format_selection" name="output_format">
+                        <option value="unix">LibreOffice</option>
+                        <option value="excel">Microsoft Excel</option>
+                    </select>
+                    <label class="mdl-textfield__label" for="format_selection">Format</label>
+                </div>
+            </form>
+        </div>
+        <!-- canvas to display chart -->
+        <div class="mdl-card__actions mdl-card--border">
+            <!-- Flat button with ripple -->
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary" form="export-form">Export</button>
+        </div>
+    </div>
+</div>
+<script>
+
+addDatepickerToTextInput('date_start_selection')
+addDatepickerToTextInput('date_end_selection')
+
+// load pool list when page is ready
+$(window).on('load', function() {
+    getPoolListData(function(pools){
+        // fill pool selection list 
+        setPoolListMdl('pool_menu', pools)
+    });
+});
+</script>
+{% endblock content %}

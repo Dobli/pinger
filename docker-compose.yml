@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+    nginx:
+        container_name: nginxpinger
+        image: nginx:latest
+        ports:
+            - "80:80"
+        volumes:
+            - ./config/nginx:/etc/nginx/conf.d
+            - pinger-static:/static
+        depends_on:
+            - web
+    db:
+        container_name: dbpinger
+        image: postgres
+        environment:
+            - POSTGRES_USER=pinger
+            - POSTGRES_PASSWORD=pinger
+            - POSTGRES_DB=pinger
+        expose:
+            - "5432"
+    mq:
+        container_name: mqpinger
+        image: rabbitmq:3
+        hostname: rabbit
+        environment:
+            - RABBITMQ_DEFAULT_USER=pinger
+            - RABBITMQ_DEFAULT_PASS=pingerpass
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+    web:
+        container_name: pingerapp
+        build: .
+        command: ["./wait-for-it.sh", "db:5432", "--", "./start_up_docker.sh"]
+        volumes:
+            - pinger-static:/static
+        ports:
+            - "8000:8000"
+        environment:
+            - DB_NAME=pinger
+            - DB_USER=pinger
+            - DB_PASS=pinger
+            - DB_SERVICE=db
+            - DB_PORT=5432
+        depends_on:
+            - mq
+            - db
+volumes:
+    pinger-static:

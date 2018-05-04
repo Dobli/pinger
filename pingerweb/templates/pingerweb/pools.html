@@ -1,0 +1,114 @@
+{% extends "pingerweb/base.html" %}
+
+{% block title %}Pools - {{ block.super }}{% endblock title %}
+
+{% block content %}
+<div class="mdl-cell mdl-cell--4-col mdl-cell--6-col-tablet mdl-cell--8-col-desktop mdl-cell--1-offset-tablet mdl-cell--2-offset-desktop">
+    <!-- Card which holds the chart and room selector -->
+    <div class="pinger-chart-card mdl-card mdl-shadow--2dp">
+        <div class="mdl-card__title">
+            <!-- drop down menu to choose pool -->
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-dirty">
+                <select class="mdl-textfield__input pool-select" id="pool_selection">
+                </select>
+                <label class="mdl-textfield__label" for="pool_selection">Pool</label>
+            </div>
+            <div class="mdl-layout-spacer"></div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="date" id="date_selection">
+                <label class="mdl-textfield__label" for="date_selection">Date</label>
+            </div>
+        </div>
+        <!-- canvas to display chart -->
+        <div class="mdl-card__actions mdl-card--border pinger-chart-container">
+            <canvas id="poolChart" height="300" class="pinger-chart-canvas" ></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+// DOM Elements
+var pingChartElem = document.getElementById("poolChart").getContext('2d')
+var poolSelectionElem = document.getElementById("pool_selection")
+var dateSelectionElem = document.getElementById("date_selection")
+
+// JS variables
+var labels = []
+var poolData = []
+var room_no = []
+var pingerChart;
+
+// function to create a chart for values in datepicker and room list
+function createChart(){
+    var dateObject;
+    // if date input is not supported use jquery date picker, else native date
+    if ($('#date_selection').get(0).type != 'date'){
+        dateObject = $( '#date_selection' ).datepicker('getDate');
+    } else {
+        dateObject = $( '#date_selection' ).get(0).valueAsDate;
+    }
+    var roomNo = $( '#pool_selection' ).val();
+    getChartDateData(roomNo, dateObject.getFullYear(), dateObject.getMonth()+1, dateObject.getDate(), setChart);
+}
+
+// setup datepicker, add select listener and set to current date
+addDatepickerToTextInput('date_selection', createChart)
+
+function resetChart(){
+    pingerChart.destroy()
+}
+
+function setChart(chartData){
+    if(pingerChart){
+        // reset the chart if already visible
+        resetChart();
+    }
+    pingerChart = new Chart(pingChartElem, {
+        type: 'line',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: chartData.room_no,
+                data: chartData.poolData,
+                backgroundColor: "#e3715155",
+                borderColor: "#d05e3e",
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+                display: true,
+                position: "top"
+            },
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Anzahl der Rechner",
+                    },
+                    ticks: {
+                        suggestedMin: 0,
+                        stepsize: 1,
+                    },
+                }],
+            },
+            ticks: {
+                min: 0,
+                beginAtZero: true
+            }
+        }
+    })
+}
+
+// call chart creation when page is ready
+$(window).on('load', function() {
+    getPoolListData(function(pools){
+        // fill pool selection drop down, on change update chart
+        setPoolList('pool_selection', pools, createChart)
+        createChart()
+    });
+});
+
+</script>
+{% endblock content %}

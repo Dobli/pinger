@@ -49,7 +49,7 @@ To run the application in the background you may want to start it with the `-d` 
 docker-compose up -d
 ```
 
-The docker-compose file only shows how a possible setup may look like and may be changed to your own need (e.g. change database credentials).
+The docker-compose file only shows how a possible setup may look like and may be changed to your own needs (e.g. change database credentials).
 
 To be able to really use the application it first needs data (e.g. pools, PCs to track), see the [Usage](#usage) section below.
 
@@ -189,20 +189,20 @@ Complementing the base Django/Celery app two other python modules are used, *Cha
 To make ongoing development easier, a few important files are listed here  together with a short description of what they contain.
 
 ```bash
-- pinger 			# Project specific files
+- pinger 		# Project specific files
 	- settings.py		# General settings for the project
 	- settings_prod.py	# production specific settings
 	- settings_dev.py	# development specific settings
-	- urls.py			# url patterns for whole project
+	- urls.py		# url patterns for whole project
 - pingerservice 	# service app specific files
-	- admin.py			# configure admin pages
-	- models.py			# data models of pinger
-	- tasks.py			# background tasks (e.g. ping)
-	- urls.py			# url patterns for service app
-	- views.py			# define HTTP/API endpoints
-- pingerweb			# web app specific files
-	- urls.py			# url patterns for web app
-	- views.py			# define HTTP/HTML endpoints
-	- static			# static files (.js, .css, images)
-	- templates			# html templates used by views
+	- admin.py		# configure admin pages
+	- models.py		# data models of pinger
+	- tasks.py		# background tasks (e.g. ping)
+	- urls.py		# url patterns for service app
+	- views.py		# define HTTP/API endpoints
+- pingerweb		# web app specific files
+	- urls.py		# url patterns for web app
+	- views.py		# define HTTP/HTML endpoints
+	- static		# static files (.js, .css, images)
+	- templates		# html templates used by views
 ```

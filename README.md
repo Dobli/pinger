@@ -1,6 +1,6 @@
 # Pinger
 
-This an python application which sends ping commands to PCs to check whether if they are turned on.
+This is an python application which sends ping commands to PCs to check whether they are turned on or not.
 
 <!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 

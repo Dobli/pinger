@@ -1,8 +1,8 @@
 from .settings import *
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [os.environ.get('HOSTNAME', '*')]
 
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'False') == "True"
 AMQP_HOST = os.environ.get('AMQP_HOST', 'mq')
 AMQP_USER = os.environ.get('AMQP_USER', 'pinger')
 AMQP_PASS = os.environ.get('AMQP_PASS', 'pingerpass')

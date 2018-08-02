@@ -16,6 +16,8 @@ services:
         container_name: dbpinger
         image: postgres
         restart: always
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
         environment:
             - POSTGRES_USER=pinger
             - POSTGRES_PASSWORD=pinger
@@ -43,6 +45,8 @@ services:
         ports:
             - "8000:8000"
         environment:
+            - HOSTNAME=localhost
+            - DEBUG=True
             - AMQP_HOST=mq
             - AMQP_USER=pinger
             - AMQP_PASS=pingerpass
@@ -56,3 +60,4 @@ services:
             - db
 volumes:
     pinger-static:
+    postgres_data:

@@ -20,6 +20,9 @@ This is an python application which sends ping commands to PCs to check whether 
 - [Startup](#startup)
 - [Architecture](#architecture)
 - [Important files](#important-files)
+- [Hints and possible Errors](#hints-and-possible-errors)
+
+
 
 <!-- /TOC -->
 
@@ -235,4 +238,11 @@ A fix for this is to configure the docker deamon wide DNS server by adding the f
 {
     "dns": ["10.0.0.2", "8.8.8.8"]
 }
+```
+
+### Admin page not reachable
+
+When the admin page is not reachable after login in (error 500), this can be due to a non migrated session database. To migrate the session database:
+```
+docker exec -it pingerapp python manage.py migrate sessions
 ```

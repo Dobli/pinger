@@ -15,6 +15,7 @@ This is an python application which sends ping commands to PCs to check whether 
 	- [Export data](#export-data)
 	- [Backups and restore](#backups-and-restore)
 		- [Backup using django](#backup-using-django)
+		- [Restore using django](#restore-using-django)
 - [Requirements](#requirements)
 - [Startup](#startup)
 - [Architecture](#architecture)
@@ -76,6 +77,8 @@ http://localhost:8000/pingerweb/pools/
 ## Usage
 
 ### Fist Run
+**Hint:** If you have a backup you want to use you should first [restore](#restore-using-django) it.
+
 When first starting the application it does not know yet which pools it has to track.
 To be able add these the administration UI can be used. It is available at `<serveradress>/admin`, when running locally this would be `localhost/admin`.
 
@@ -125,14 +128,14 @@ To export .csv data from pinger to be used for further analysis you can use the 
 
 The data consists of one row of data for each day and 5 columns for each pool. The data describes for each day and pool the sum of the runtime in each pool, the real average runtime (not dependent on number of PCs in a pool, only taking into account PCs which were used) and the calculated energy consumption depending on the consumption settings of that pool as well as the total number of PCs. 
 
-### Backups and restore
+### Backups and Restore
 To back up the data pinger collects there are multiple options.
 If only the information about pools and PCs is needed the method using the UI is recommended, this only saves and loads the pools to monitor.
 
 To create full updates the usage of command line commands are recommended (may be placed in a cron tab to execute them scheduled).
 Here again multiple options exist.
 
-#### Backup using django
+#### Backup using Django
 Django allows to backup and restore data using fixture file (see [here](https://docs.djangoproject.com/en/2.0/howto/initial-data/)).
 To dump all data of the `pingerservice` (in human readable format using indentation), run:
 ```shell
@@ -145,6 +148,19 @@ docker exec -t pingerapp python manage.py dumpdata --indent 2 pingerservice > pi
 ```
 
 In both cases the file `pingerdump.json` gets stored in the current working direcotry.
+
+#### Restore using Django
+To restore from a file called `pingerdump.json` to a local pinger setup you simply call `loaddata` like this:
+```shell
+python manage.py loaddata pingerdump.json
+```
+When dealing with a docker setup, the corresponding .json file needs to be copied into the container and then can be loaded by Django. The container needs to run already (see [Installation](#installation) above), to copy and restore the file then inside the `pingerapp` execute the following commands:
+
+```shell
+docker cp pingerdump.json pingerapp:/tmp/ # copy the file into the container
+docker exec -t pingerapp python manage.py loaddata /tmp/pingerdump.json # execute the restore in the container 
+```
+The restore process needs a few minutes depending on the amount of the data.
 
 ## Requirements
 The pinger implementations needs a few depndencies to run:

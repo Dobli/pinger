@@ -206,3 +206,17 @@ To make ongoing development easier, a few important files are listed here  toget
 	- static		# static files (.js, .css, images)
 	- templates		# html templates used by views
 ```
+
+
+## Hints and possible Errors
+
+### Problems with local DNS (e.g. pip not able to resolve hostnames)
+
+In case the local network enforces the usage of the local DNS, blocking access to external ones (including the default fallback Google DNS 8.8.8.8), the docker container may not be able to corretly use the hosts DNS configuration and is unable to properly resolve hostnames.
+
+A fix for this is to configure the docker deamon wide DNS server by adding the following entry to `/etc/docker/daemon.json` with the according DNS addresses:
+```
+{
+    "dns": ["10.0.0.2", "8.8.8.8"]
+}
+```

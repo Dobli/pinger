@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3
+FROM python:3.6
 ENV PYTHONBUFFERED 1
 
 # Use settings file of production mode

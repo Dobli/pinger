@@ -43,6 +43,9 @@ services:
         ports:
             - "8000:8000"
         environment:
+            - AMQP_HOST=mq
+            - AMQP_USER=pinger
+            - AMQP_PASS=pingerpass
             - DB_NAME=pinger
             - DB_USER=pinger
             - DB_PASS=pinger

@@ -1,8 +1,11 @@
 from .settings import *
-#  DEBUG = False
-AMQP_HOST = "mq"
-AMQP_USER = "pinger"
-AMQP_PASS = "pingerpass"
+
+ALLOWED_HOSTS = ['*']
+
+DEBUG = False
+AMQP_HOST = os.environ.get('AMQP_HOST', 'mq')
+AMQP_USER = os.environ.get('AMQP_USER', 'pinger')
+AMQP_PASS = os.environ.get('AMQP_PASS', 'pingerpass')
 
 DATABASES = {
     'default': {

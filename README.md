@@ -246,3 +246,16 @@ When the admin page is not reachable after login in (error 500), this can be due
 ```
 docker exec -it pingerapp python manage.py migrate sessions
 ```
+
+### Running out of space
+
+By default Docker does not rotate the logs produced by the containers. This can quickly lead to rather big logs consuming a lot of disk space. It is therefore recommended to add system wide docker log rotation by adding the following to `/etc/docker/daemon.json` (see [here](https://docs.docker.com/config/containers/logging/configure/) for further information), this will limit the logs to a file size of 10 MB:
+```
+{
+    "log-driver": "json-file",
+    "log-opts": {
+      "max-size": "10m",
+      "max-file": "10"
+    }
+}
+```
